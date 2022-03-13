@@ -9,3 +9,14 @@
 .successMessage, .errorMessage {
     margin-left: 0.5rem;
 }
+
+
+.card {
+    display: flex;
+    grid-template-columns: 1fr 1fr;
+  }
+
+.column1 {
+    width:25%;
+    border-radius: 7px;
+}
