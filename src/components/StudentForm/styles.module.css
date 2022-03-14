@@ -9,3 +9,30 @@
 .successMessage, .errorMessage {
     margin-left: 0.5rem;
 }
+
+
+.card {
+    display: flex;
+    width: 100%;
+    grid-template-columns: 1fr 1fr;
+    padding: 0px 0px 0px 20px;
+    align-items: center;
+  }
+
+.columnLeft {
+    display: contents;
+    border-radius: 7px;
+    margin: 50px
+}
+
+.columnRight {
+    width: 100%;
+    padding: 15px 20px 20px 20px;
+}
+
+.bottomCard{
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    padding: 20px 20px 20px 20px;
+}

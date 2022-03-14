@@ -44,6 +44,7 @@ const StudentsList = () => {
             </div>
           </div>
         }
+        <div className={styles.gridList}> 
         {
           !loading && students.map((student: any) => {
             return (
@@ -51,6 +52,8 @@ const StudentsList = () => {
             );
           })
         }
+
+        </div>
       </div>
       <div className="block"/>
       <div>
