@@ -4,8 +4,10 @@
   width: 100%;
   background-color: #fafafa;
   margin: 7px;
+  min-height: 150px;
   padding: 10px;
   cursor: pointer;
+  height: 100%;
   display: flex;
   grid-template-columns: 1fr 1fr;
   border-radius: 7px;
