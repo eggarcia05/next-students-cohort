@@ -7,7 +7,7 @@ const StudentItem = (props: any) => {
   return (
     <Link href={`/student/${student.id}`}> 
     <div className={styles.card}>
-      <img src="https://www.getbillage.com/files/user/avatar/58c685d4796d2_AlejandroDruran.png" alt="Avatar" style={{ width: "13%", height:"13%" }} />
+      <img src={student?.picture ?? "https://www.kindpng.com/picc/m/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png"} alt="Avatar" style={{ width: "13%", height:"13%", }} />
       <div className={styles.container}>
         <h4>
           <b style={{fontSize:"1.2em"}}>
@@ -15,12 +15,10 @@ const StudentItem = (props: any) => {
           </b>
         </h4>
         { student?.description ? <p><b> &nbsp; Description:</b> {student?.description}</p> : ""}
-        { student?.description ? <p><b> &nbsp; Years Of Experience:</b> {student?.years_experience} ages</p> : ""}
-        { student?.description ? <p><b> &nbsp; Tech Skills:</b> {student?.tech_skills} </p> : ""}
-        { student?.description ? <p><b> &nbsp; Soft Skills:</b> {student?.soft_skills} </p> : ""}
+        { student?.years_experience ? <p><b> &nbsp; Years Of Experience:</b> {student?.years_experience} ages</p> : ""}
+        { student?.tech_skills ? <p><b> &nbsp; Tech Skills:</b> {student?.tech_skills} </p> : ""}
+        { student?.soft_skills ? <p><b> &nbsp; Soft Skills:</b> {student?.soft_skills} </p> : ""}
 
-
-        <p></p>
       </div>
     </div>
     </Link>
