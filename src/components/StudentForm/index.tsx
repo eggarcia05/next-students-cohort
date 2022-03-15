@@ -1,8 +1,11 @@
 import axios from "axios";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Config from "../../config";
-import Router from 'next/router'
+import Router from "next/router";
+import AWS from "aws-sdk";
+//@ts-ignore
+const fs = require("fs");
 
 import styles from "./styles.module.css";
 
@@ -19,15 +22,45 @@ const StudentForm = (props: StudentFormProp) => {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
+  const ID = "AKIAVZPJVRFPPUPXBLUY";
+  const SECRET = "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";
+
+  // The name of the bucket that you have created
+  const BUCKET_NAME = "cohort3-students-photos";
+
+  const uploadFile = async (file: any) => {
+    const s3 = new AWS.S3({
+      accessKeyId: ID,
+      secretAccessKey: SECRET,
+    });
+
+    // Read content from the file
+    // const fileContent = fs.readFileSync(fileName);
+    const key = "" + new Date().getTime() + "-" + file.name;
+    // Setting up S3 upload parameters
+    const params = {
+      Bucket: BUCKET_NAME,
+      Key: key, // File name you want to save as in S3
+      Body: file,
+    };
+
+    // Uploading files to the bucket
+    s3.upload(params, function (err: any, data: any) {
+      if (err) {
+        throw err;
+      }
+      console.log(`File uploaded successfully. `);
+      setStudent({ ...student, picture: data.Location });
+    });
+  };
+
   useEffect(() => {
-    setStudent(props.student);    
-    console.log(student);
+    setStudent(props.student);
   }, [studentId]);
 
   const handleInputsValues = (event: any) => {
     const { name, value } = event.target;
     setStudent({ ...student, [name]: value });
-    
   };
 
   const handleSetMessage = (message: string) => {
@@ -37,28 +70,44 @@ const StudentForm = (props: StudentFormProp) => {
       clearInterval(interval);
     }, 3000);
   };
+  const hiddenFileInput = useRef(null);
+  
+  const handleChange = async (event: any) => {
+    if (event.target.files && event.target.files[0]) {
+      const i = event.target.files[0];
+      await uploadFile(i);
+    }
+  };
+
+  const handleClick = (event: any) => {
+    if (hiddenFileInput !== null) {
+      hiddenFileInput.current.click();
+    }
+  };
 
   const handleDeleteStudent = (event: any) => {
     event.preventDefault();
     setLoading(true);
 
     axios
-    .delete(Config.studentsApi, { data: { id: studentId }, headers: { "Authorization": "***" } })
-    .then((response) => {
-      handleSetMessage("User Deleted!");
-      console.log("Delete user response", response);
-      setTimeout(() => {
-        Router.push('/')
-      }, 1500);
-    })
-    .catch((error) => {
-      console.log("There was an error deleting a student.", error);
-    })
-    .finally(() => {
-      setLoading(false);
-    });
-
-  }
+      .delete(Config.studentsApi, {
+        data: { id: studentId },
+        headers: { Authorization: "***" },
+      })
+      .then((response) => {
+        handleSetMessage("User Deleted!");
+        console.log("Delete user response", response);
+        setTimeout(() => {
+          Router.push("/");
+        }, 1500);
+      })
+      .catch((error) => {
+        console.log("There was an error deleting a student.", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   const handleSaveStudent = (event: any) => {
     event.preventDefault();
@@ -104,13 +153,36 @@ const StudentForm = (props: StudentFormProp) => {
     return (
       <form className="box">
         <div className={styles.card}>
-          <div className={styles.columnLeft}>
-            <img
-              src="https://www.getbillage.com/files/user/avatar/58c685d4796d2_AlejandroDruran.png"
-              alt="Avatar"
-              style={{ width: "13.6%", height: "13.6%" }}
-            />
-          </div>
+          {student?.picture ? (
+            <div className={styles.columnLeft}>
+              <img
+                src={student.picture}
+                alt="Avatar"
+                onClick={() => setStudent({...student, picture: null}) } 
+                style={{ cursor: "pointer", width: "13.6%", height: "13.6%" }}
+              />
+            </div>
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "left",
+                margin: "50px",
+              }}
+            >
+              <input
+                type="file"
+                ref={hiddenFileInput}
+                onChange={handleChange}
+                accept="image/*"
+                style={{ display: "none" }}
+              />
+
+              <a onClick={handleClick} style={{ width: "13.6%" }}>
+                Upload
+              </a>
+            </div>
+          )}
           <div className={styles.columnRight}>
             <label className="label">First name</label>
             <input
@@ -167,20 +239,32 @@ const StudentForm = (props: StudentFormProp) => {
           />
           <br />
           <br />
-        
-              <label className="label">Status</label>
+
+          <label className="label">Status</label>
+          <div className="control">
+            <label className="radio">
               <input
-            className="input"
-            type="text"
-            id="status"
-            name="status"
-            value={student?.status ?? ""}
-            onChange={handleInputsValues}
-            placeholder="Active | Inactive"
-            disabled={loading}
-          />
-          
-          <br />
+                type="radio"
+                name="answer"
+                value="Active"
+                onClick={(event: any) =>
+                  setStudent({ ...student, status_st: event.target.value })
+                }
+              />
+              Active
+            </label>
+            <label className="radio">
+              <input
+                type="radio"
+                name="answer"
+                value="Inactive"
+                onClick={(event: any) =>
+                  setStudent({ ...student, status_st: event.target.value })
+                }
+              />
+              Inactive
+            </label>
+          </div>
           <br />
           <label className="label">Work Experience</label>
           <input
@@ -270,8 +354,9 @@ const StudentForm = (props: StudentFormProp) => {
           />
           <input
             className={`button is-danger ${loading ? "is-loading" : ""}`}
+            style={{ marginLeft: "0.5rem" }}
             type="submit"
-            value="Delete"
+            value="Permanent Delete"
             disabled={loading}
             onClick={handleDeleteStudent}
           />

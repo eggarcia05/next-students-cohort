@@ -11,15 +11,18 @@
   display: flex;
   grid-template-columns: 1fr 1fr;
   border-radius: 7px;
+  vertical-align:middle;
 }
 
 .card:hover {
   box-shadow: 0 8px 16px 0 rgba(0, 29, 85, 0.2); 
   background-color: rgba(0, 29, 85, 0.4);
 }
+
 .container {
   padding: 2px 16px;
 }
+
 .button {
   background-color: red; /* Green */
   border: none;

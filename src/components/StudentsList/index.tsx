@@ -47,6 +47,7 @@ const StudentsList = () => {
         <div className={styles.gridList}> 
         {
           !loading && students.map((student: any) => {
+            if(student?.status_st === "Active")
             return (
               <StudentListItem key={student.id} student={student}/>
             );
