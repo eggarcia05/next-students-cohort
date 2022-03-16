@@ -22,8 +22,8 @@ const StudentForm = (props: StudentFormProp) => {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  const ID = "AKIAVZPJVRFPPUPXBLUY";
-  const SECRET = "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";
+  const ID = process.env.AWSAccessKeyId;
+  const SECRET = process.env.AWSSecretKey;
 
   // The name of the bucket that you have created
   const BUCKET_NAME = "cohort3-students-photos";
@@ -31,7 +31,7 @@ const StudentForm = (props: StudentFormProp) => {
   const uploadFile = async (file: any) => {
     const s3 = new AWS.S3({
       accessKeyId: ID,
-      secretAccessKey: SECRET,
+      secretAccessKey: SECRET ,
     });
 
     // Read content from the file
